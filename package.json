@@ -17,5 +17,8 @@
     "ts-jest": "^29.2.5",
     "tslib": "^2.7.0",
     "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@onecomme.com/onesdk": "^6.0.0"
   }
 }
