@@ -1,39 +1,62 @@
 import { JSDOM } from "jsdom"
 
+// urlの正規表現
 const URL_PATTERN = /https?:\/\/[\w/:%#$&?()~.=+@,-]+/g
 
 /**
- * urlをspanタグで囲う
+ * テキスト中のurlをspanタグで囲う
  * @param text 対象テキスト
  * @returns 処理済みテキスト
  */
-export const wrapUrlWithTag = (text: string): string => {
-  // imgタグのsrcなどを変換しないようにdomを考慮する
+export const wrapUrlPattern = (text: string): string => {
+  // imgタグのsrcなどを変換しないようにテキストノードのみを対象にする
+  text = execFuncOnTextNode(text, (child, document) => {
+    let content = child.textContent ?? ""
+    content = content.replace(URL_PATTERN, "<span>$&</span>")
+    updateTextNode(child, document, content)
+  })
+  return text
+}
+
+/**
+ * テキスト中のテキストノードのみを対象に処理を実行する
+ * @param text 対象テキスト
+ * @param callback 実行したい処理
+ * @returns 処理済みテキスト
+ */
+export const execFuncOnTextNode = (
+  text: string,
+  func: (node: Node, document: Document) => void,
+): string => {
   const dom = new JSDOM(text)
   const document = dom.window.document
-  for (const child of document.body.childNodes) {
+  const children = Array.from(document.body.childNodes)
+  for (const child of children) {
     // テキストノードのみ対象にする
     if (child.nodeType === document.TEXT_NODE) {
-      // splitでセパレータを配列に含めるために()で囲む
-      const separator = new RegExp(`(${URL_PATTERN.source})`, "g")
-      const contents = (child.textContent ?? "").split(separator)
-      for (const [index, content] of contents.entries()) {
-        if (index % 2 === 1) {
-          // urlならspanタグで囲って自身の前に追加
-          const node = document.createElement("span")
-          node.textContent = content
-          document.body.insertBefore(node, child)
-        } else {
-          // テキストならそのまま自身の前に追加
-          if (content) {
-            const node = document.createTextNode(content)
-            document.body.insertBefore(node, child)
-          }
-        }
-      }
-      // 自身を削除
-      document.body.removeChild(child)
+      func(child, document)
     }
   }
-  return document.body.innerHTML
+  text = document.body.innerHTML
+  return text
+}
+
+/**
+ * テキストノードをdomを考慮して更新する
+ * @param child テキストノード
+ * @param document ドキュメント
+ * @param content タグを含んだテキスト
+ */
+export const updateTextNode = (
+  child: Node,
+  document: Document,
+  content: string,
+) => {
+  const node = document.createElement("div")
+  node.innerHTML = content
+  const children = Array.from(node.childNodes)
+  for (const n of children) {
+    document.body.insertBefore(n, child)
+  }
+  document.body.removeChild(child)
 }
