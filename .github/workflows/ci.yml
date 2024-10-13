@@ -5,25 +5,26 @@ on:
     branches:
       - develop
     paths:
-      - src/**
-  pull_request:
-    branches:
-      - develop
-    paths:
-      - src/**
+      - src/**/*
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: pnpm/action-setup@v4
+    - name: checkout code
+      uses: actions/checkout@v4
+    - name: setup pnpm
+      uses: pnpm/action-setup@v4
       with:
         version: 9
-    - uses: actions/setup-node@v4
+    - name: setup node
+      uses: actions/setup-node@v4
       with:
         node-version: 22
         cache: 'pnpm'
-    - run: pnpm install
-    - run: pnpm run lint
-    - run: pnpm run test
+    - name: exec install
+      run: pnpm install
+    - name: exec lint
+      run: pnpm run lint
+    - name: exec test
+      run: pnpm run test
