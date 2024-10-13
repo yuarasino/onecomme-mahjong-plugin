@@ -54,6 +54,13 @@ describe("replaceMpszSuitedPattern", () => {
     const actual = replaceMpszSuitedPattern(content)
     expect(actual).toBe(expected)
   })
+
+  test("bar included", () => {
+    const content = "正解は1-2mです"
+    const expected = `正解は${createTileTag("m1")}-${createTileTag("m2")}です`
+    const actual = replaceMpszSuitedPattern(content)
+    expect(actual).toBe(expected)
+  })
 })
 
 describe("replaceMpszHonorPattern", () => {
@@ -84,6 +91,13 @@ describe("replaceMpszHonorPattern", () => {
     const actual = replaceMpszHonorPattern(content)
     expect(actual).toBe(expected)
   })
+
+  test("bar included", () => {
+    const content = "正解は1-2zです"
+    const expected = `正解は${createTileTag("z1")}-${createTileTag("z2")}です`
+    const actual = replaceMpszHonorPattern(content)
+    expect(actual).toBe(expected)
+  })
 })
 
 describe("replaceHanSuitedPattern", () => {
@@ -107,12 +121,26 @@ describe("replaceHanSuitedPattern", () => {
     const actual = replaceHanSuitedPattern(content)
     expect(actual).toBe(expected)
   })
+
+  test("bar included", () => {
+    const content = "正解は１－２萬です"
+    const expected = `正解は${createTileTag("m1")}-${createTileTag("m2")}です`
+    const actual = replaceHanSuitedPattern(content)
+    expect(actual).toBe(expected)
+  })
 })
 
 describe("replaceHanHonorPattern", () => {
   test("exec check", () => {
     const content = "正解は東南です"
     const expected = `正解は${createTileTag("z1")}${createTileTag("z2")}です`
+    const actual = replaceHanHonorPattern(content)
+    expect(actual).toBe(expected)
+  })
+
+  test("bar included", () => {
+    const content = "正解は東-南です"
+    const expected = `正解は${createTileTag("z1")}-${createTileTag("z2")}です`
     const actual = replaceHanHonorPattern(content)
     expect(actual).toBe(expected)
   })

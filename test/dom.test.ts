@@ -1,5 +1,5 @@
 import { describe, expect, test } from "@jest/globals"
-import { JSDOM } from "jsdom"
+import { Window } from "happy-dom"
 
 import { execFuncOnTextNode, updateTextNode, wrapUrlPattern } from "../src/dom"
 
@@ -30,19 +30,19 @@ describe("wrapUrlPattern", () => {
 describe("execFuncOnTextNode", () => {
   test("exec check", () => {
     const text = "テスト<span>コメント</span>です"
-    const func = (child: Node, document: Document) => {
-      child.textContent += "にゃ"
-    }
     const expected = "テストにゃ<span>コメント</span>ですにゃ"
-    const actual = execFuncOnTextNode(text, func)
+    const actual = execFuncOnTextNode(text, (child, document) => {
+      child.textContent += "にゃ"
+    })
     expect(actual).toBe(expected)
   })
 })
 
 describe("updateOnTextNode", () => {
   test("exec check", () => {
-    const dom = new JSDOM("テストコメントです")
-    const document = dom.window.document
+    const window = new Window()
+    const document = window.document
+    document.body.innerHTML = "テストコメントです"
     // biome-ignore lint/style/noNonNullAssertion: for test
     const child = document.body.firstChild!
     const content = "テスト<span>コメント</span>です"

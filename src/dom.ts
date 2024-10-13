@@ -1,4 +1,5 @@
-import { JSDOM } from "jsdom"
+import { Window } from "happy-dom"
+import type { Document, Node } from "happy-dom"
 
 // urlの正規表現
 const URL_PATTERN = /https?:\/\/[\w/:%#$&?()~.=+@,-]+/g
@@ -44,8 +45,9 @@ export const execFuncOnTextNode = (
   text: string,
   func: (node: Node, document: Document) => void,
 ): string => {
-  const dom = new JSDOM(text)
-  const document = dom.window.document
+  const window = new Window()
+  const document = window.document
+  document.body.innerHTML = text
   const children = Array.from(document.body.childNodes)
   for (const child of children) {
     // テキストノードのみ対象にする

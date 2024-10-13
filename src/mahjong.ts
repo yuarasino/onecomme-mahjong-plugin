@@ -22,8 +22,8 @@ const SYMBOL_BAR_PATTERN = /(?:-|－|ー|‐|－|―)/g
 
 // スタイル
 export const TILE_STYLE_TAG = `<style>
-  .comment-text .tile { width: 1.5em; height: auto; }
-  .comment-text :not(.tile) + .tile { margin-left: 4px; }
+  .comment-text .tile { width: 1.5em; height: auto; margin: 4px; }
+  .comment-text .tile + .tile { margin-left: -4px; }
 </style>`.replace(/\n/g, "")
 
 /**
@@ -177,5 +177,5 @@ export const createTileTag = (tile: string): string => {
 }
 
 export const createImageSource = (tile: string): string => {
-  return `/plugins/${constants.PLUGIN_UID}/images/${tile}.png`
+  return `${constants.PLUGIN_ROOT}/images/${tile}.png`
 }
