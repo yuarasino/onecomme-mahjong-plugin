@@ -12,7 +12,23 @@ export const wrapUrlPattern = (text: string): string => {
   // imgタグのsrcなどを変換しないようにテキストノードのみを対象にする
   text = execFuncOnTextNode(text, (child, document) => {
     let content = child.textContent ?? ""
-    content = content.replace(URL_PATTERN, "<span>$&</span>")
+    content = content.replace(URL_PATTERN, (url) => {
+      return `<span>${url}</span>`
+    })
+    updateTextNode(child, document, content)
+  })
+  return text
+}
+
+/**
+ * テキスト中のテキストノードをspanタグで囲う
+ * @param text 対象テキスト
+ * @returns 処理済みテキスト
+ */
+export const wrapTextNode = (text: string): string => {
+  text = execFuncOnTextNode(text, (child, document) => {
+    let content = child.textContent ?? ""
+    content = `<span>${content}</span>`
     updateTextNode(child, document, content)
   })
   return text
