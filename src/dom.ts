@@ -1,5 +1,5 @@
 import { Window } from "happy-dom"
-import type { Document, Node } from "happy-dom"
+import type { Document, HTMLElement, Node } from "happy-dom"
 
 // urlの正規表現
 const URL_PATTERN = /https?:\/\/[\w/:%#$&?()~.=+@,-]+/g
@@ -36,14 +36,38 @@ export const wrapTextNode = (text: string): string => {
 }
 
 /**
+ * テキスト中のエレメントノードのみを対象に処理を実行する
+ * @param text 対象テキスト
+ * @param func 実行したい処理
+ * @returns 処理済みテキスト
+ */
+export const execFuncOnElementNode = (
+  text: string,
+  func: (child: HTMLElement, document: Document) => void,
+): string => {
+  const window = new Window()
+  const document = window.document
+  document.body.innerHTML = text
+  const children = Array.from(document.body.childNodes)
+  for (const child of children) {
+    // エレメントノードのみ対象にする
+    if (child.nodeType === document.ELEMENT_NODE) {
+      func(child as HTMLElement, document)
+    }
+  }
+  text = document.body.innerHTML
+  return text
+}
+
+/**
  * テキスト中のテキストノードのみを対象に処理を実行する
  * @param text 対象テキスト
- * @param callback 実行したい処理
+ * @param func 実行したい処理
  * @returns 処理済みテキスト
  */
 export const execFuncOnTextNode = (
   text: string,
-  func: (node: Node, document: Document) => void,
+  func: (child: Node, document: Document) => void,
 ): string => {
   const window = new Window()
   const document = window.document

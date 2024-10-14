@@ -1,5 +1,6 @@
 import * as constants from "./constants"
 import {
+  execFuncOnElementNode,
   execFuncOnTextNode,
   updateTextNode,
   wrapTextNode,
@@ -15,16 +16,10 @@ const MPSZ_RED_PATTERN = /(?:r5|赤5|ｒ５|赤５)/g
 // 漢字形式
 const HAN_SUIT_PATTERN = /[萬筒索]/g
 const HAN_RANK_PATTERN = /[〇一二三四五六七八九０-９]/g
-const HAN_LETTER_PATTERN = /[東南西北白發中]/g
+const HAN_LETTER_PATTERN = /[東南西北白發中発]/g
 const HAN_RED_PATTERN = /(?:ｒ五|赤五|ｒ５|赤５)/g
 // 記号
 const SYMBOL_BAR_PATTERN = /(?:-|－|ー|‐|－|―)/g
-
-// スタイル
-export const TILE_STYLE_TAG = `<style>
-  .comment-text .tile { width: 1.5em; height: auto; margin: 4px; }
-  .comment-text .tile + .tile { margin-left: -4px; }
-</style>`.replace(/\n/g, "")
 
 /**
  * テキスト中の麻雀牌を画像に置き換える
@@ -43,10 +38,19 @@ export const replaceMahjongTile = (text: string): string => {
     content = replaceHanHonorPattern(content)
     updateTextNode(child, document, content)
   })
-  // 牌と文字の間に間隔をあけるためにテキストノードをspanタグでラップする
+  // 牌と文字の間に間隔をあけるためにテキストノードをspanタグで囲う
   text = wrapTextNode(text)
-  // 牌のスタイルを調整するためにstyleタグを追加
-  text = TILE_STYLE_TAG + text
+  // 牌と文字の間に間隔をあける
+  text = execFuncOnElementNode(text, (child, document) => {
+    const sibling = child.nextElementSibling
+    if (sibling) {
+      const c = child.classList.contains("tile")
+      const s = sibling.classList.contains("tile")
+      if ((c && !s) || (!c && s)) {
+        child.style.marginRight = "4px"
+      }
+    }
+  })
   return text
 }
 
@@ -73,7 +77,7 @@ export const replaceMpszSuitedPattern = (content: string): string => {
     hand = hand.replace(r, (rank) => {
       rank = getNormalizedRank(rank)
       const tile = `${suit}${rank}`
-      return createTileTag(tile)
+      return createImageTag(tile)
     })
     return hand
   })
@@ -99,7 +103,7 @@ export const replaceMpszHonorPattern = (content: string): string => {
     hand = hand.replace(r, (rank) => {
       rank = getNormalizedRank(rank)
       const tile = `z${rank}`
-      return createTileTag(tile)
+      return createImageTag(tile)
     })
     return hand
   })
@@ -126,7 +130,7 @@ export const replaceHanSuitedPattern = (content: string): string => {
     hand = hand.replace(r, (rank) => {
       rank = getNormalizedRank(rank)
       const tile = `${suit}${rank}`
-      return createTileTag(tile)
+      return createImageTag(tile)
     })
     return hand
   })
@@ -144,11 +148,12 @@ export const replaceHanHonorPattern = (content: string): string => {
   const rb = new RegExp(`(?:${r.source}|${b.source})`, "g")
   const h = new RegExp(`(${rb.source}*${r.source})`, "g")
   content = content.replace(h, (_, hand: string) => {
+    hand = hand.replace(/発/g, "發")
     hand = hand.replace(b, "-")
     hand = hand.replace(r, (rank) => {
       rank = getNormalizedRank(rank)
       const tile = `z${rank}`
-      return createTileTag(tile)
+      return createImageTag(tile)
     })
     return hand
   })
@@ -172,8 +177,8 @@ export const getNormalizedRank = (rank: string): string => {
   return "0123456789"[index % 10]
 }
 
-export const createTileTag = (tile: string): string => {
-  return `<img src="${createImageSource(tile)}" alt="${tile}" class="tile">`
+export const createImageTag = (tile: string): string => {
+  return `<img src="${createImageSource(tile)}" alt="${tile}" class="tile" style="width: 1.25em; height: auto; margin-block: 2px;">`
 }
 
 export const createImageSource = (tile: string): string => {
