@@ -15,9 +15,9 @@ const MPSZ_LETTER_PATTERN = /[1234567１２３４５６７]/g
 const MPSZ_RED_PATTERN = /(?:r5|赤5|ｒ５|赤５)/g
 // 漢字形式
 const HAN_SUIT_PATTERN = /[萬筒索]/g
-const HAN_RANK_PATTERN = /[〇一二三四五六七八九０-９]/g
+const HAN_RANK_PATTERN = /[0123456789０１２３４５６７８９〇一二三四五六七八九]/g
 const HAN_LETTER_PATTERN = /[東南西北白發中発]/g
-const HAN_RED_PATTERN = /(?:ｒ五|赤五|ｒ５|赤５)/g
+const HAN_RED_PATTERN = /(?:r5|赤5|ｒ五|赤五|ｒ５|赤５)/g
 // 記号
 const SYMBOL_BAR_PATTERN = /(?:-|－|ー|‐|－|―)/g
 
@@ -71,13 +71,13 @@ export const replaceMpszSuitedPattern = (content: string): string => {
     "g",
   )
   content = content.replace(h, (_, hand: string, suit: string) => {
-    suit = getNormalizedSuit(suit)
+    suit = normalizeSuit(suit)
     hand = hand.replace(a, "0")
     hand = hand.replace(b, "-")
     hand = hand.replace(r, (rank) => {
-      rank = getNormalizedRank(rank)
+      rank = normalizeRank(rank)
       const tile = `${suit}${rank}`
-      return createImageTag(tile)
+      return createTag(tile)
     })
     return hand
   })
@@ -101,9 +101,9 @@ export const replaceMpszHonorPattern = (content: string): string => {
   content = content.replace(h, (_, hand: string) => {
     hand = hand.replace(b, "-")
     hand = hand.replace(r, (rank) => {
-      rank = getNormalizedRank(rank)
+      rank = normalizeRank(rank)
       const tile = `z${rank}`
-      return createImageTag(tile)
+      return createTag(tile)
     })
     return hand
   })
@@ -124,13 +124,13 @@ export const replaceHanSuitedPattern = (content: string): string => {
   const rb = new RegExp(`(?:${ra.source}|${b.source})`, "g")
   const h = new RegExp(`(${rb.source}*${ra.source})(${s.source})`, "g")
   content = content.replace(h, (_, hand: string, suit: string) => {
-    suit = getNormalizedSuit(suit)
-    hand = hand.replace(a, "〇")
+    suit = normalizeSuit(suit)
+    hand = hand.replace(a, "0")
     hand = hand.replace(b, "-")
     hand = hand.replace(r, (rank) => {
-      rank = getNormalizedRank(rank)
+      rank = normalizeRank(rank)
       const tile = `${suit}${rank}`
-      return createImageTag(tile)
+      return createTag(tile)
     })
     return hand
   })
@@ -151,36 +151,32 @@ export const replaceHanHonorPattern = (content: string): string => {
     hand = hand.replace(/発/g, "發")
     hand = hand.replace(b, "-")
     hand = hand.replace(r, (rank) => {
-      rank = getNormalizedRank(rank)
+      rank = normalizeRank(rank)
       const tile = `z${rank}`
-      return createImageTag(tile)
+      return createTag(tile)
     })
     return hand
   })
   return content
 }
 
-export const getNormalizedSuit = (suit: string): string => {
-  const targets = ["mps", "ｍｐｓ", "萬筒索"].join("")
+export const normalizeSuit = (suit: string): string => {
+  const targets = "mpsｍｐｓ萬筒索"
   const index = targets.indexOf(suit)
   return "mps"[index % 3]
 }
 
-export const getNormalizedRank = (rank: string): string => {
-  const targets = [
-    "0123456789",
-    "０１２３４５６７８９",
-    "〇一二三四五六七八九",
-    "〇東南西北白發中",
-  ].join("")
+export const normalizeRank = (rank: string): string => {
+  const targets =
+    "0123456789０１２３４５６７８９〇一二三四五六七八九〇東南西北白發中"
   const index = targets.indexOf(rank)
   return "0123456789"[index % 10]
 }
 
-export const createImageTag = (tile: string): string => {
-  return `<img src="${createImageSource(tile)}" alt="${tile}" class="tile" style="width: 1.25em; height: auto; margin-block: 2px;">`
+export const createTag = (tile: string): string => {
+  return `<img src="${createSource(tile)}" alt="${tile}" class="tile" style="width: 1.25em; height: auto; margin-block: 2px;">`
 }
 
-export const createImageSource = (tile: string): string => {
+export const createSource = (tile: string): string => {
   return `${constants.PLUGIN_ROOT}/images/${tile}.png`
 }

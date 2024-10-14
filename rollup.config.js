@@ -1,6 +1,7 @@
 import commonjs from "@rollup/plugin-commonjs"
 import json from "@rollup/plugin-json"
-import { nodeResolve } from "@rollup/plugin-node-resolve"
+import resolve from "@rollup/plugin-node-resolve"
+import replace from "@rollup/plugin-replace"
 import terser from "@rollup/plugin-terser"
 import typescript from "@rollup/plugin-typescript"
 import copy from "rollup-plugin-copy"
@@ -13,10 +14,17 @@ export default {
     format: "commonjs",
   },
   plugins: [
-    typescript(),
-    nodeResolve(),
+    replace({
+      preventAssignment: true,
+      values: {
+        __PACKAGE_NAME__: JSON.stringify(process.env.npm_package_name),
+        __PACKAGE_VERSION__: JSON.stringify(process.env.npm_package_version),
+      },
+    }),
+    resolve(),
     commonjs(),
     json(),
+    typescript(),
     terser(),
     copy({
       targets: [{ src: "public/*", dest: "dist" }],
