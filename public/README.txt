@@ -1,6 +1,8 @@
 わんコメ麻雀プラグイン
 onecomme mahjong plugin
 
+バージョン: v1.0.0
+
 作者: 新篠ゆう@バーチャル美少女プログラマー
 ソースコード: https://github.com/yuarasino/onecomme-mahjong-plugin
 

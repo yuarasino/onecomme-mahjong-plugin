@@ -14,4 +14,8 @@ describe("plugin", () => {
   test("バージョンがあること", () => {
     expect(plugin.version).toBeTruthy()
   })
+
+  test("URLがあること", () => {
+    expect(plugin.url).toBeTruthy()
+  })
 })

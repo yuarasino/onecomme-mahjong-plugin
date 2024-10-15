@@ -19,6 +19,7 @@ export default {
       values: {
         __PACKAGE_NAME__: JSON.stringify(process.env.npm_package_name),
         __PACKAGE_VERSION__: JSON.stringify(process.env.npm_package_version),
+        __PACKAGE_URL__: JSON.stringify(process.env.npm_package_homepage),
       },
     }),
     resolve(),

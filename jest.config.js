@@ -6,5 +6,6 @@ export default {
   globals: {
     __PACKAGE_NAME__: process.env.npm_package_name,
     __PACKAGE_VERSION__: process.env.npm_package_version,
+    __PACKAGE_URL__: process.env.npm_package_homepage,
   },
 }
