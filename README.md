@@ -1,8 +1,6 @@
 # onecomme-mahjong-plugin
 
-<p align="center">
-  <img src="./docs/onecomme-mahjong-plugin.png" style="max-width: 540px;">
-</p>
+![onecomme-mahjong-plugin](./docs/onecomme-mahjong-plugin.png)
 
 
 ## Description
@@ -14,15 +12,16 @@
 
 ## Requirements
 
-- node.js 22.x
-- pnpm 9.x
+- node.js v22.0+
+- pnpm v9.0+
 
 
 ## Development
 
-- rollup: commonjsのビルド
+- rollup: commonjs形式へのビルド
 - biome: コード整形
-- jest: ユニットテスト
+- jest: 単体テスト
+- github-actions: 自動テスト、自動リリース
 
 
 ## License

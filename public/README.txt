@@ -1,8 +1,6 @@
 わんコメ麻雀プラグイン
 onecomme mahjong plugin
 
-バージョン: v1.0.0
-
 作者: 新篠ゆう@バーチャル美少女プログラマー
 ソースコード: https://github.com/yuarasino/onecomme-mahjong-plugin
 
@@ -10,8 +8,8 @@ onecomme mahjong plugin
 
 ◆ 利用方法 ◆
 
-・わんコメ 5.2 以上をインストールする。
-　動かない場合は 6.0 以上を使ってみてください。
+・わんコメのv5.2以上をインストールする。
+　動かない場合はv6.0以上を使ってみてください。
 
 ・公式の手順に従ってプラグインを有効化する。
   https://onecomme.com/docs/feature/plugins

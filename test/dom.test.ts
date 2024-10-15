@@ -1,24 +1,29 @@
 import { describe, expect, test } from "@jest/globals"
 import { Window } from "happy-dom"
 
-import { execFuncOnTextNode, updateTextNode, wrapUrlPattern } from "../src/dom"
+import {
+  execFuncOnElementNode,
+  execFuncOnTextNode,
+  updateTextNode,
+  wrapUrlPattern,
+} from "../src/dom"
 
 describe("wrapUrlPattern", () => {
-  test("exec check", () => {
+  test("動作確認", () => {
     const text = `告知！<img src="https://example.com/icon.png"> https://example.com/page/ 見に来てね！`
     const expected = `告知！<img src="https://example.com/icon.png"> <span>https://example.com/page/</span> 見に来てね！`
     const actual = wrapUrlPattern(text)
     expect(actual).toBe(expected)
   })
 
-  test("no url", () => {
+  test("URLがないとき", () => {
     const text = "テストコメントです"
     const expected = "テストコメントです"
     const actual = wrapUrlPattern(text)
     expect(actual).toBe(expected)
   })
 
-  test("multi url", () => {
+  test("URLが複数のとき", () => {
     const text = "https://example.com/test/ https://example.com/test/"
     const expected =
       "<span>https://example.com/test/</span> <span>https://example.com/test/</span>"
@@ -27,8 +32,19 @@ describe("wrapUrlPattern", () => {
   })
 })
 
+describe("execFuncOnElementNode", () => {
+  test("動作確認", () => {
+    const text = "テスト<span>コメント</span>です"
+    const expected = "テスト<span>コメントにゃ</span>です"
+    const actual = execFuncOnElementNode(text, (child, document) => {
+      child.innerText += "にゃ"
+    })
+    expect(actual).toBe(expected)
+  })
+})
+
 describe("execFuncOnTextNode", () => {
-  test("exec check", () => {
+  test("動作確認", () => {
     const text = "テスト<span>コメント</span>です"
     const expected = "テストにゃ<span>コメント</span>ですにゃ"
     const actual = execFuncOnTextNode(text, (child, document) => {
@@ -39,7 +55,7 @@ describe("execFuncOnTextNode", () => {
 })
 
 describe("updateOnTextNode", () => {
-  test("exec check", () => {
+  test("動作確認", () => {
     const window = new Window()
     const document = window.document
     document.body.innerHTML = "テストコメントです"
