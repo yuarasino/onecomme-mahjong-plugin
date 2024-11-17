@@ -25,11 +25,21 @@ function createImgWithMargin(tile: string, config: PluginConfig) {
 describe("applyMahjongPretty/applyMahjongPretty", () => {
   const config = deepCopy(consts.DEFAULT_CONFIG)
 
-  test("麻雀牌が画像に変換されること", () => {
-    const text = "テスト12mテスト"
-
+  test.each([
+    [
+      "テスト1m2zテスト",
+      `${createSpanWithMargin("テスト", config)}${createImg("m1", config)}${createImgWithMargin("z2", config)}${createSpan("テスト")}`,
+    ],
+    [
+      "テスト1m２筒テスト",
+      `${createSpanWithMargin("テスト", config)}${createImg("m1", config)}${createImgWithMargin("p2", config)}${createSpan("テスト")}`,
+    ],
+    [
+      "テスト1m南テスト",
+      `${createSpanWithMargin("テスト", config)}${createImg("m1", config)}${createImgWithMargin("z2", config)}${createSpan("テスト")}`,
+    ],
+  ])("麻雀牌が画像に変換されること", (text, expected) => {
     const actual = applyMahjongPretty(text, config)
-    const expected = `${createSpanWithMargin("テスト", config)}${createImg("m1", config)}${createImgWithMargin("m2", config)}${createSpan("テスト")}`
 
     expect(actual).toBe(expected)
   })
@@ -181,7 +191,7 @@ describe("applyMahjongPretty/replaceHanSuitedPattern", () => {
       `テスト${createImg("m1", config)}${createImg("m0", config)}テスト`,
     ],
     [
-      "テスト1萬r5筒テスト",
+      "テスト1萬ｒ五筒テスト",
       `テスト${createImg("m1", config)}${createImg("p0", config)}テスト`,
     ],
     [
