@@ -1,8 +1,8 @@
-import { assert, describe, test } from "vitest"
+import { describe, expect, test } from "vitest"
 import plugin from "../src/plugin"
 
 describe("plugin", () => {
-  test("name", () => {
-    assert(plugin.name !== undefined)
+  test("プラグイン名が設定されていること", () => {
+    expect(plugin.name).toBeTruthy()
   })
 })
