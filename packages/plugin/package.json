@@ -2,13 +2,15 @@
   "name": "@mahjongpretty/plugin",
   "type": "module",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "test": "vitest run"
   },
   "dependencies": {
     "@mahjongpretty/core": "workspace:*",
     "@onecomme.com/onesdk": "^6.0.0"
   },
   "devDependencies": {
-    "vite": "^5.4.11"
+    "vite": "^5.4.11",
+    "vitest": "^2.1.5"
   }
 }

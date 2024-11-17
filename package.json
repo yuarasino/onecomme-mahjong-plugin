@@ -3,6 +3,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm run --filter \"*\" build",
+    "test": "pnpm run --filter \"*\" test",
     "lint": "biome ci",
     "fix": "biome check --fix --unsafe"
   },
