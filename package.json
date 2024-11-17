@@ -1,0 +1,7 @@
+{
+  "name": "@mahjongpretty/mahjongpretty",
+  "dependencies": {
+    "@mahjongpretty/core": "workspace:*"
+  },
+  "packageManager": "pnpm@9.13.2"
+}

@@ -1,0 +1,21 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@mahjongpretty/core':
+        specifier: workspace:*
+        version: link:packages/core
+
+  packages/core: {}
+
+  packages/plugin:
+    dependencies:
+      '@mahjongpretty/core':
+        specifier: workspace:*
+        version: link:../core

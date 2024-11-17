@@ -1,0 +1,6 @@
+{
+  "name": "@mahjongpretty/plugin",
+  "dependencies": {
+    "@mahjongpretty/core": "workspace:*"
+  }
+}
