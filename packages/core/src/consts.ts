@@ -9,6 +9,10 @@ export const PLUGIN_AUTHOR_JA = "新篠ゆう"
 export const PLUGIN_WEB_EP = `http://localhost:11180/plugins/${PLUGIN_UID}`
 export const PLUGIN_API_EP = `http://localhost:11180/api/plugins/${PLUGIN_UID}`
 
+export const BOOTH_URL = "https://yuarasino.booth.pm/items/6188675"
+export const GITHUB_URL = "https://github.com/yuarasino/mahjongpretty"
+export const X_URL = "https://x.com/yuarasino"
+
 export const DEFAULT_CONFIG = {
   imageClass: "tile",
   imageHeight: 36,

@@ -3,15 +3,23 @@
   "type": "module",
   "scripts": {
     "build": "pnpm run --filter \"*\" build",
+    "postbuild": "tsx ./scripts/postbuild.ts",
+    "infobuild": "tsx ./scripts/infobuild.ts",
     "test": "pnpm run --filter \"*\" test",
     "lint": "biome ci",
     "fix": "biome check --fix --unsafe"
   },
   "packageManager": "pnpm@9.13.2",
   "dependencies": {
-    "@mahjongpretty/core": "workspace:*"
+    "@actions/core": "^1.11.1",
+    "@mahjongpretty/core": "workspace:*",
+    "fs-extra": "^11.2.0",
+    "mustache": "^4.2.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4"
+    "@biomejs/biome": "^1.9.4",
+    "@types/fs-extra": "^11.0.4",
+    "@types/mustache": "^4.2.5",
+    "tsx": "^4.19.2"
   }
 }

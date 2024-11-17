@@ -11,7 +11,7 @@ export default {
   uid: consts.PLUGIN_UID,
   version: consts.PLUGIN_VERSION,
   author: consts.PLUGIN_AUTHOR_JA,
-  url: `${consts.PLUGIN_WEB_EP}/index.html`,
+  url: consts.BOOTH_URL,
   permissions: ["filter.comment"],
   defaultState: deepCopy(consts.DEFAULT_CONFIG),
 
