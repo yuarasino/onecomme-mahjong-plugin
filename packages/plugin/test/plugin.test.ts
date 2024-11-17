@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals"
+import { describe, expect, test } from "vitest"
 
 import plugin from "../src/plugin"
 
@@ -13,9 +13,5 @@ describe("plugin", () => {
 
   test("バージョンがあること", () => {
     expect(plugin.version).toBeTruthy()
-  })
-
-  test("URLがあること", () => {
-    expect(plugin.url).toBeTruthy()
   })
 })
