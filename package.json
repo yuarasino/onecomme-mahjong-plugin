@@ -1,7 +1,11 @@
 {
   "name": "@mahjongpretty/mahjongpretty",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm run --filter \"*\" build"
+  },
+  "packageManager": "pnpm@9.13.2",
   "dependencies": {
     "@mahjongpretty/core": "workspace:*"
-  },
-  "packageManager": "pnpm@9.13.2"
+  }
 }

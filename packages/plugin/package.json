@@ -1,6 +1,14 @@
 {
   "name": "@mahjongpretty/plugin",
+  "type": "module",
+  "scripts": {
+    "build": "vite build"
+  },
   "dependencies": {
-    "@mahjongpretty/core": "workspace:*"
+    "@mahjongpretty/core": "workspace:*",
+    "@onecomme.com/onesdk": "^6.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.11"
   }
 }
