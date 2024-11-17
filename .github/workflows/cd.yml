@@ -1,0 +1,44 @@
+name: cd
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  cd:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v4
+    - name: setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+    - name: setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: 'pnpm'
+    - name: exec install
+      run: pnpm install
+    - name: exec build
+      run: pnpm run build
+    - name: info build
+      run: pnpm run infobuild
+      id: info
+    - name: rename dist
+      run: mv dist ${{ steps.info.outputs.name }}
+    - name: zip dist
+      run: zip -r ${{ steps.info.outputs.file }} ${{ steps.info.outputs.name }}
+    - name: create release
+      uses: softprops/action-gh-release@v2
+      with:
+        draft: true
+        name: ${{ steps.info.outputs.version }}
+        tag_name: ${{ steps.info.outputs.version }}
+        body: ${{ steps.info.outputs.version }}
+        files: ${{ steps.info.outputs.file }}
