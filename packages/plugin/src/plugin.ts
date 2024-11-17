@@ -13,5 +13,5 @@ export default {
 
   async filterComment(comment) {
     return comment
-  }
+  },
 } satisfies OnePlugin

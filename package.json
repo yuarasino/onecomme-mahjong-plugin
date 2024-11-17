@@ -2,10 +2,15 @@
   "name": "@mahjongpretty/mahjongpretty",
   "type": "module",
   "scripts": {
-    "build": "pnpm run --filter \"*\" build"
+    "build": "pnpm run --filter \"*\" build",
+    "lint": "biome ci",
+    "fix": "biome check --fix --unsafe"
   },
   "packageManager": "pnpm@9.13.2",
   "dependencies": {
     "@mahjongpretty/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
   }
 }
