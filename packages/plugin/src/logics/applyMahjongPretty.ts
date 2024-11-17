@@ -13,7 +13,7 @@ const MPSZ_RED_PATTERN = /(?:r5|赤5|ｒ５|赤５)/g
 const HAN_SUIT_PATTERN = /[萬筒索]/g
 const HAN_RANK_PATTERN = /[0123456789０１２３４５６７８９〇一二三四五六七八九]/g
 const HAN_LETTER_PATTERN = /[東南西北白發中発]/g
-const HAN_RED_PATTERN = /(?:r5|赤5|ｒ五|赤五|ｒ５|赤５)/g
+const HAN_RED_PATTERN = /(?:r5|赤5|ｒ５|赤５|ｒ五|赤五)/g
 // 記号
 const SYMBOL_BAR_PATTERN = /(?:-|－|ー|‐|－|―)/g
 
