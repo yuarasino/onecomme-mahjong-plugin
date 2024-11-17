@@ -1,5 +1,12 @@
 import * as consts from "@mahjongpretty/core/src/consts"
-import { execFuncOnTextNode, wrapUrlPattern } from "../utils/dom"
+import { render } from "dom-serializer"
+import { DomUtils } from "htmlparser2"
+import {
+  execFuncOnElementNode,
+  execFuncOnTextNode,
+  wrapTextNode,
+  wrapUrlPattern,
+} from "../utils/dom"
 
 import type { PluginConfig } from "@mahjongpretty/core/src/types"
 
@@ -31,6 +38,26 @@ export default function applyMahjongPretty(
   text = replaceMpszHonorPattern(text, config)
   text = replaceHanSuitedPattern(text, config)
   text = replaceHanHonorPattern(text, config)
+  text = wrapTextNode(text)
+  text = addImageMargin(text, config)
+  return text
+}
+
+export function addImageMargin(text: string, config: PluginConfig): string {
+  text = execFuncOnElementNode(text, (child) => {
+    const sibling = DomUtils.nextElementSibling(child)
+    if (sibling) {
+      const cc = child.attribs.class
+      const sc = sibling.attribs.class
+      const cb = cc ? cc.includes(config.imageClass) : false
+      const sb = sc ? sc.includes(config.imageClass) : false
+      if ((cb && !sb) || (!cb && sb)) {
+        const cs = child.attribs.style
+        child.attribs.style = `${cs ? cs : ""}margin-inline-end:${config.imageMarginX}px;`
+      }
+    }
+    return render(child, { encodeEntities: false })
+  })
   return text
 }
 
@@ -43,25 +70,25 @@ export const replaceMpszSuitedPattern = (
   text: string,
   config: PluginConfig,
 ): string => {
-  const s = MPSZ_SUIT_PATTERN
-  const r = MPSZ_RANK_PATTERN
-  const a = MPSZ_RED_PATTERN
-  const b = SYMBOL_BAR_PATTERN
-  const ra = new RegExp(`(?:${r.source}|${a.source})`, "g")
-  const rb = new RegExp(`(?:${ra.source}|${b.source})`, "g")
-  const h = new RegExp(
-    `(${rb.source}*${ra.source})(${s.source})(?![a-qs-zａ-ｑｓ-ｚ])`,
+  const sp = MPSZ_SUIT_PATTERN
+  const rp = MPSZ_RANK_PATTERN
+  const ap = MPSZ_RED_PATTERN
+  const bp = SYMBOL_BAR_PATTERN
+  const rap = new RegExp(`(?:${rp.source}|${ap.source})`, "g")
+  const rbp = new RegExp(`(?:${rap.source}|${bp.source})`, "g")
+  const hp = new RegExp(
+    `(${rbp.source}*${rap.source})(${sp.source})(?![a-qs-zａ-ｑｓ-ｚ])`,
     "g",
   )
   text = execFuncOnTextNode(text, (child) => {
-    return child.data.replaceAll(h, (_, hand: string, suit: string) => {
+    return child.data.replaceAll(hp, (_, hand: string, suit: string) => {
       suit = normalizeSuit(suit)
-      hand = hand.replaceAll(a, "0")
-      hand = hand.replaceAll(b, "-")
-      hand = hand.replaceAll(r, (rank) => {
+      hand = hand.replaceAll(ap, "0")
+      hand = hand.replaceAll(bp, "-")
+      hand = hand.replaceAll(rp, (rank) => {
         rank = normalizeRank(rank)
         const tile = `${suit}${rank}`
-        return createTag(tile, config)
+        return createImg(tile, config)
       })
       return hand
     })
@@ -78,21 +105,21 @@ export const replaceMpszHonorPattern = (
   text: string,
   config: PluginConfig,
 ): string => {
-  const s = MPSZ_HONOR_PATTERN
-  const r = MPSZ_LETTER_PATTERN
-  const b = SYMBOL_BAR_PATTERN
-  const rb = new RegExp(`(?:${r.source}|${b.source})`, "g")
-  const h = new RegExp(
-    `(${rb.source}*${r.source})(${s.source})(?![a-qs-zａ-ｑｓ-ｚ])`,
+  const sp = MPSZ_HONOR_PATTERN
+  const rp = MPSZ_LETTER_PATTERN
+  const bp = SYMBOL_BAR_PATTERN
+  const rbp = new RegExp(`(?:${rp.source}|${bp.source})`, "g")
+  const hp = new RegExp(
+    `(${rbp.source}*${rp.source})(${sp.source})(?![a-qs-zａ-ｑｓ-ｚ])`,
     "g",
   )
   text = execFuncOnTextNode(text, (child) => {
-    return child.data.replace(h, (_, hand: string) => {
-      hand = hand.replace(b, "-")
-      hand = hand.replace(r, (rank) => {
+    return child.data.replace(hp, (_, hand: string) => {
+      hand = hand.replace(bp, "-")
+      hand = hand.replace(rp, (rank) => {
         rank = normalizeRank(rank)
         const tile = `z${rank}`
-        return createTag(tile, config)
+        return createImg(tile, config)
       })
       return hand
     })
@@ -109,22 +136,22 @@ export const replaceHanSuitedPattern = (
   text: string,
   config: PluginConfig,
 ): string => {
-  const s = HAN_SUIT_PATTERN
-  const r = HAN_RANK_PATTERN
-  const a = HAN_RED_PATTERN
-  const b = SYMBOL_BAR_PATTERN
-  const ra = new RegExp(`(?:${r.source}|${a.source})`, "g")
-  const rb = new RegExp(`(?:${ra.source}|${b.source})`, "g")
-  const h = new RegExp(`(${rb.source}*${ra.source})(${s.source})`, "g")
+  const sp = HAN_SUIT_PATTERN
+  const rp = HAN_RANK_PATTERN
+  const ap = HAN_RED_PATTERN
+  const bp = SYMBOL_BAR_PATTERN
+  const rap = new RegExp(`(?:${rp.source}|${ap.source})`, "g")
+  const rbp = new RegExp(`(?:${rap.source}|${bp.source})`, "g")
+  const h = new RegExp(`(${rbp.source}*${rap.source})(${sp.source})`, "g")
   text = execFuncOnTextNode(text, (child) => {
     return child.data.replace(h, (_, hand: string, suit: string) => {
       suit = normalizeSuit(suit)
-      hand = hand.replace(a, "0")
-      hand = hand.replace(b, "-")
-      hand = hand.replace(r, (rank) => {
+      hand = hand.replace(ap, "0")
+      hand = hand.replace(bp, "-")
+      hand = hand.replace(rp, (rank) => {
         rank = normalizeRank(rank)
         const tile = `${suit}${rank}`
-        return createTag(tile, config)
+        return createImg(tile, config)
       })
       return hand
     })
@@ -141,18 +168,18 @@ export const replaceHanHonorPattern = (
   text: string,
   config: PluginConfig,
 ): string => {
-  const r = HAN_LETTER_PATTERN
-  const b = SYMBOL_BAR_PATTERN
-  const rb = new RegExp(`(?:${r.source}|${b.source})`, "g")
-  const h = new RegExp(`(${rb.source}*${r.source})`, "g")
+  const rp = HAN_LETTER_PATTERN
+  const bp = SYMBOL_BAR_PATTERN
+  const rbp = new RegExp(`(?:${rp.source}|${bp.source})`, "g")
+  const hp = new RegExp(`(${rbp.source}*${rp.source})`, "g")
   text = execFuncOnTextNode(text, (child) => {
-    return child.data.replace(h, (_, hand: string) => {
+    return child.data.replace(hp, (_, hand: string) => {
       hand = hand.replace(/発/g, "發")
-      hand = hand.replace(b, "-")
-      hand = hand.replace(r, (rank) => {
+      hand = hand.replace(bp, "-")
+      hand = hand.replace(rp, (rank) => {
         rank = normalizeRank(rank)
         const tile = `z${rank}`
-        return createTag(tile, config)
+        return createImg(tile, config)
       })
       return hand
     })
@@ -173,10 +200,7 @@ export const normalizeRank = (rank: string): string => {
   return "0123456789"[index % 10]
 }
 
-export const createTag = (
-  tile: string,
-  { size, marginY }: PluginConfig,
-): string => {
+export const createImg = (tile: string, config: PluginConfig): string => {
   const src = `${consts.PLUGIN_WEB_EP}/images/${tile}.png`
-  return `<img src="${src}" alt="${tile}" class="tile" style="width: auto; height: ${size}px; margin-block: ${marginY}px;">`
+  return `<img src="${src}" alt="${tile}" class="${config.imageClass}" style="width:auto;height:${config.imageHeight}px;margin-block:${config.imageMarginY}px;">`
 }

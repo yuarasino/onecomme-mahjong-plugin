@@ -1,5 +1,6 @@
 export type PluginConfig = {
-  size: number
-  marginX: number
-  marginY: number
+  imageClass: string
+  imageHeight: number
+  imageMarginX: number
+  imageMarginY: number
 }

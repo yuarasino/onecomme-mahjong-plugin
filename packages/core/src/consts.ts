@@ -10,7 +10,8 @@ export const PLUGIN_WEB_EP = `http://localhost:11180/plugins/${PLUGIN_UID}`
 export const PLUGIN_API_EP = `http://localhost:11180/api/plugins/${PLUGIN_UID}`
 
 export const DEFAULT_CONFIG = {
-  size: 36,
-  marginX: 4,
-  marginY: 4,
+  imageClass: "tile",
+  imageHeight: 36,
+  imageMarginX: 4,
+  imageMarginY: 4,
 } as PluginConfig

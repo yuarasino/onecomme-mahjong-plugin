@@ -1,7 +1,7 @@
 import { render } from "dom-serializer"
 import { ElementType, parseDocument } from "htmlparser2"
 
-import type { Text } from "domhandler"
+import type { Element, Text } from "domhandler"
 
 const URL_PATTERN = /https?:\/\/[\w/:%#$&?()~.=+@,-]+/g
 
@@ -13,8 +13,20 @@ const URL_PATTERN = /https?:\/\/[\w/:%#$&?()~.=+@,-]+/g
 export function wrapUrlPattern(text: string): string {
   text = execFuncOnTextNode(text, (child) => {
     return child.data.replaceAll(URL_PATTERN, (url) => {
-      return `<span>${url}</span>`
+      return createSpan(url)
     })
+  })
+  return text
+}
+
+/**
+ * テキスト中のテキストノードをspanタグでラップする
+ * @param text 対象テキスト
+ * @returns 処理済みテキスト
+ */
+export function wrapTextNode(text: string): string {
+  text = execFuncOnTextNode(text, (child) => {
+    return createSpan(child.data)
   })
   return text
 }
@@ -35,11 +47,38 @@ export function execFuncOnTextNode(
     if (child.type === ElementType.Text) {
       // テキストノードの場合のみ処理をする
       text += func(child)
-    }
-    if (child.type === ElementType.Tag) {
+    } else {
       // エレメントノードの場合はそのままにする
-      text += render(child)
+      text += render(child, { encodeEntities: false })
     }
   }
   return text
+}
+
+/**
+ * テキスト中のタグに処理をする
+ * @param text 対象テキスト
+ * @returns 処理済みテキスト
+ */
+export function execFuncOnElementNode(
+  text: string,
+  func: (child: Element) => string,
+): string {
+  // imgタグのsrcなどをラップしないようにDOMを考慮する
+  const document = parseDocument(text, { decodeEntities: false })
+  text = ""
+  for (const child of document.childNodes) {
+    if (child.type === ElementType.Tag) {
+      // エレメントノードの場合のみ処理をする
+      text += func(child)
+    } else {
+      // テキストノードの場合はそのままにする
+      text += render(child, { encodeEntities: false })
+    }
+  }
+  return text
+}
+
+export function createSpan(content: string): string {
+  return `<span>${content}</span>`
 }
