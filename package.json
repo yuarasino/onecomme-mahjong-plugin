@@ -7,7 +7,7 @@
     "infobuild": "tsx ./scripts/infobuild.ts",
     "test": "pnpm run --filter \"*\" test",
     "lint": "biome ci",
-    "fix": "biome check --fix --unsafe"
+    "fmt": "biome check --fix --unsafe"
   },
   "packageManager": "pnpm@9.13.2",
   "dependencies": {
