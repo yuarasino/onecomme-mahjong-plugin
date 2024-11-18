@@ -2,8 +2,8 @@ import * as consts from "@mahjongpretty/core/src/consts"
 import { deepCopy } from "@mahjongpretty/core/src/utils"
 import { describe, expect, test } from "vitest"
 import applyMahjongPretty, {
-  createImg,
   addImageMargin,
+  createImg,
   replaceMpszSuitedPattern,
   replaceMpszHonorPattern,
   replaceHanSuitedPattern,
@@ -40,6 +40,15 @@ describe("applyMahjongPretty/applyMahjongPretty", () => {
     ],
   ])("麻雀牌が画像に変換されること", (text, expected) => {
     const actual = applyMahjongPretty(text, config)
+
+    expect(actual).toBe(expected)
+  })
+
+  test("URLが変換されないこと", () => {
+    const text = "テストhttps://example.com/12mテスト"
+
+    const actual = applyMahjongPretty(text, config)
+    const expected = `${createSpan("テスト")}${createSpan("https://example.com/12m")}${createSpan("テスト")}`
 
     expect(actual).toBe(expected)
   })
@@ -164,6 +173,15 @@ describe("applyMahjongPretty/replaceMpszHonorPattern", () => {
 
     expect(actual).toBe(expected)
   })
+
+  test("8以上の数字は変換されないこと", () => {
+    const text = "テスト08zテスト"
+
+    const actual = replaceMpszHonorPattern(text, config)
+    const expected = "テスト08zテスト"
+
+    expect(actual).toBe(expected)
+  })
 })
 
 describe("applyMahjongPretty/replaceHanSuitedPattern", () => {
@@ -216,6 +234,10 @@ describe("applyMahjongPretty/replaceHanHonorPattern", () => {
     [
       "テスト東ー南テスト",
       `テスト${createImg("z1", config)}-${createImg("z2", config)}テスト`,
+    ],
+    [
+      "テスト發-発テスト",
+      `テスト${createImg("z6", config)}-${createImg("z6", config)}テスト`,
     ],
   ])("漢字形式数牌が変換されること", (text, expected) => {
     const actual = replaceHanHonorPattern(text, config)
