@@ -6,7 +6,7 @@ import type { OnePlugin, PluginAPI } from "@onecomme.com/onesdk/types/Plugin"
 
 let m_api: PluginAPI
 
-export default {
+const plugin: OnePlugin = {
   name: consts.PLUGIN_NAME_JA,
   uid: consts.PLUGIN_UID,
   version: consts.PLUGIN_VERSION,
@@ -22,4 +22,6 @@ export default {
   async filterComment(comment) {
     return await filter(comment, m_api)
   },
-} satisfies OnePlugin
+}
+
+export default plugin

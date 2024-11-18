@@ -13,9 +13,9 @@ export const BOOTH_URL = "https://yuarasino.booth.pm/items/6188675"
 export const GITHUB_URL = "https://github.com/yuarasino/mahjongpretty"
 export const X_URL = "https://x.com/yuarasino"
 
-export const DEFAULT_CONFIG = {
+export const DEFAULT_CONFIG: PluginConfig = {
   imageHeight: 36,
   imageMarginX: 4,
   imageMarginY: 4,
   imageClass: "tile",
-} as PluginConfig
+}
