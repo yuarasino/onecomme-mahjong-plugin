@@ -8,8 +8,6 @@ import {
   wrapUrlPattern,
 } from "../utils/dom"
 
-import type { PluginConfig } from "@mahjongpretty/core/src/types"
-
 // mpsz形式
 const MPSZ_SUIT_PATTERN = /[mpsｍｐｓ]/g
 const MPSZ_RANK_PATTERN = /[0123456789０１２３４５６７８９]/g
@@ -29,35 +27,14 @@ const SYMBOL_BAR_PATTERN = /(?:-|－|ー|‐|－|―)/g
  * @param text 対象テキスト
  * @returns 処理済みテキスト
  */
-export default function applyMahjongPretty(
-  text: string,
-  config: PluginConfig,
-): string {
+export default function applyMahjongPretty(text: string): string {
   text = wrapUrlPattern(text)
-  text = replaceMpszSuitedPattern(text, config)
-  text = replaceMpszHonorPattern(text, config)
-  text = replaceHanSuitedPattern(text, config)
-  text = replaceHanHonorPattern(text, config)
+  text = replaceMpszSuitedPattern(text)
+  text = replaceMpszHonorPattern(text)
+  text = replaceHanSuitedPattern(text)
+  text = replaceHanHonorPattern(text)
   text = wrapTextNode(text)
-  text = addImageMargin(text, config)
-  return text
-}
-
-export function addImageMargin(text: string, config: PluginConfig): string {
-  text = execFuncOnElementNode(text, (child) => {
-    const sibling = DomUtils.nextElementSibling(child)
-    if (sibling) {
-      const cc = child.attribs.class
-      const sc = sibling.attribs.class
-      const cb = cc ? cc.includes(config.imageClass) : false
-      const sb = sc ? sc.includes(config.imageClass) : false
-      if ((cb && !sb) || (!cb && sb)) {
-        const cs = child.attribs.style
-        child.attribs.style = `${cs ? cs : ""}margin-inline-end:${config.imageMarginX}px;`
-      }
-    }
-    return render(child, { encodeEntities: false })
-  })
+  text = addImageMargin(text)
   return text
 }
 
@@ -66,10 +43,7 @@ export function addImageMargin(text: string, config: PluginConfig): string {
  * @param text 対象テキスト
  * @returns 処理済みテキスト
  */
-export const replaceMpszSuitedPattern = (
-  text: string,
-  config: PluginConfig,
-): string => {
+export const replaceMpszSuitedPattern = (text: string): string => {
   const sp = MPSZ_SUIT_PATTERN
   const rp = MPSZ_RANK_PATTERN
   const ap = MPSZ_RED_PATTERN
@@ -88,7 +62,7 @@ export const replaceMpszSuitedPattern = (
       hand = hand.replaceAll(rp, (rank) => {
         rank = normalizeRank(rank)
         const tile = `${suit}${rank}`
-        return createImg(tile, config)
+        return createImg(tile)
       })
       return hand
     })
@@ -101,10 +75,7 @@ export const replaceMpszSuitedPattern = (
  * @param text 対象テキスト
  * @returns 処理済みテキスト
  */
-export const replaceMpszHonorPattern = (
-  text: string,
-  config: PluginConfig,
-): string => {
+export const replaceMpszHonorPattern = (text: string): string => {
   const sp = MPSZ_HONOR_PATTERN
   const rp = MPSZ_LETTER_PATTERN
   const bp = SYMBOL_BAR_PATTERN
@@ -119,7 +90,7 @@ export const replaceMpszHonorPattern = (
       hand = hand.replace(rp, (rank) => {
         rank = normalizeRank(rank)
         const tile = `z${rank}`
-        return createImg(tile, config)
+        return createImg(tile)
       })
       return hand
     })
@@ -132,10 +103,7 @@ export const replaceMpszHonorPattern = (
  * @param text 対象テキスト
  * @returns 処理済みテキスト
  */
-export const replaceHanSuitedPattern = (
-  text: string,
-  config: PluginConfig,
-): string => {
+export const replaceHanSuitedPattern = (text: string): string => {
   const sp = HAN_SUIT_PATTERN
   const rp = HAN_RANK_PATTERN
   const ap = HAN_RED_PATTERN
@@ -151,7 +119,7 @@ export const replaceHanSuitedPattern = (
       hand = hand.replace(rp, (rank) => {
         rank = normalizeRank(rank)
         const tile = `${suit}${rank}`
-        return createImg(tile, config)
+        return createImg(tile)
       })
       return hand
     })
@@ -164,10 +132,7 @@ export const replaceHanSuitedPattern = (
  * @param text 対象テキスト
  * @returns 処理済みテキスト
  */
-export const replaceHanHonorPattern = (
-  text: string,
-  config: PluginConfig,
-): string => {
+export const replaceHanHonorPattern = (text: string): string => {
   const rp = HAN_LETTER_PATTERN
   const bp = SYMBOL_BAR_PATTERN
   const rbp = new RegExp(`(?:${rp.source}|${bp.source})`, "g")
@@ -179,7 +144,7 @@ export const replaceHanHonorPattern = (
       hand = hand.replace(rp, (rank) => {
         rank = normalizeRank(rank)
         const tile = `z${rank}`
-        return createImg(tile, config)
+        return createImg(tile)
       })
       return hand
     })
@@ -200,7 +165,25 @@ export const normalizeRank = (rank: string): string => {
   return "0123456789"[index % 10]
 }
 
-export const createImg = (tile: string, config: PluginConfig): string => {
+export const createImg = (tile: string): string => {
   const src = `${consts.PLUGIN_WEB_EP}/images/${tile}.png`
-  return `<img src="${src}" alt="${tile}" class="${config.imageClass}" style="width:auto;height:${config.imageHeight}px;margin-block:${config.imageMarginY}px;">`
+  return `<img src="${src}" alt="${tile}" class="pai">`
+}
+
+export function addImageMargin(text: string): string {
+  text = execFuncOnElementNode(text, (child) => {
+    const sibling = DomUtils.nextElementSibling(child)
+    if (sibling) {
+      const cc = child.attribs.class
+      const sc = sibling.attribs.class
+      const cb = cc ? cc.includes("pai") : false
+      const sb = sc ? sc.includes("pai") : false
+      if ((cb && !sb) || (!cb && sb)) {
+        const cl = child.attribs.class
+        child.attribs.class = `${cl ? `${cl} ` : ""}margin`
+      }
+    }
+    return render(child, { encodeEntities: false })
+  })
+  return text
 }

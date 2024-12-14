@@ -11,35 +11,31 @@ import applyMahjongPretty, {
 } from "../../src/logics/applyMahjongPretty"
 import { createSpan } from "../../src/utils/dom"
 
-import type { PluginConfig } from "@mahjongpretty/core/src/types"
-
-function createSpanWithMargin(content: string, config: PluginConfig) {
-  return `<span style="margin-inline-end:${config.imageMarginX}px;">${content}</span>`
+function createSpanWithMargin(content: string) {
+  return `<span class="margin">${content}</span>`
 }
 
-function createImgWithMargin(tile: string, config: PluginConfig) {
+function createImgWithMargin(tile: string) {
   const src = `${consts.PLUGIN_WEB_EP}/images/${tile}.png`
-  return `<img src="${src}" alt="${tile}" class="${config.imageClass}" style="width:auto;height:${config.imageHeight}px;margin-block:${config.imageMarginY}px;margin-inline-end:${config.imageMarginX}px;">`
+  return `<img src="${src}" alt="${tile}" class="pai margin">`
 }
 
 describe("applyMahjongPretty/applyMahjongPretty", () => {
-  const config = deepCopy(consts.DEFAULT_CONFIG)
-
   test.each([
     [
       "テスト1m2zテスト",
-      `${createSpanWithMargin("テスト", config)}${createImg("m1", config)}${createImgWithMargin("z2", config)}${createSpan("テスト")}`,
+      `${createSpanWithMargin("テスト")}${createImg("m1")}${createImgWithMargin("z2")}${createSpan("テスト")}`,
     ],
     [
       "テスト1m２筒テスト",
-      `${createSpanWithMargin("テスト", config)}${createImg("m1", config)}${createImgWithMargin("p2", config)}${createSpan("テスト")}`,
+      `${createSpanWithMargin("テスト")}${createImg("m1")}${createImgWithMargin("p2")}${createSpan("テスト")}`,
     ],
     [
       "テスト1m南テスト",
-      `${createSpanWithMargin("テスト", config)}${createImg("m1", config)}${createImgWithMargin("z2", config)}${createSpan("テスト")}`,
+      `${createSpanWithMargin("テスト")}${createImg("m1")}${createImgWithMargin("z2")}${createSpan("テスト")}`,
     ],
   ])("麻雀牌が画像に変換されること", (text, expected) => {
-    const actual = applyMahjongPretty(text, config)
+    const actual = applyMahjongPretty(text)
 
     expect(actual).toBe(expected)
   })
@@ -47,7 +43,7 @@ describe("applyMahjongPretty/applyMahjongPretty", () => {
   test("URLが変換されないこと", () => {
     const text = "テストhttps://example.com/12mテスト"
 
-    const actual = applyMahjongPretty(text, config)
+    const actual = applyMahjongPretty(text)
     const expected = `${createSpan("テスト")}${createSpan("https://example.com/12m")}${createSpan("テスト")}`
 
     expect(actual).toBe(expected)
@@ -56,7 +52,7 @@ describe("applyMahjongPretty/applyMahjongPretty", () => {
   test("imgタグの中が変換されないこと", () => {
     const text = 'テスト<img src="https://example.com/12m">テスト'
 
-    const actual = applyMahjongPretty(text, config)
+    const actual = applyMahjongPretty(text)
     const expected = `${createSpan("テスト")}<img src="https://example.com/12m">${createSpan("テスト")}`
 
     expect(actual).toBe(expected)
@@ -72,59 +68,37 @@ describe("applyMahjongPretty/applyMahjongPretty", () => {
       `${createSpan("テスト")}<span>&lt;style&gt;* { color: red; }&lt;/style&gt;</span>${createSpan("テスト")}`,
     ],
   ])("サニタイズされたタグが復元されないこと", (text, expected) => {
-    const actual = applyMahjongPretty(text, config)
+    const actual = applyMahjongPretty(text)
 
     expect(actual).toBe(expected)
   })
 })
 
 describe("applyMahjongPretty/addImageMargin", () => {
-  const config = deepCopy(consts.DEFAULT_CONFIG)
-
   test("麻雀牌が隣り合わないときにマージンが入ること", () => {
-    const text = `${createSpan("テスト")}${createImg("m1", config)}${createImg("m2", config)}${createSpan("テスト")}`
+    const text = `${createSpan("テスト")}${createImg("m1")}${createImg("m2")}${createSpan("テスト")}`
 
-    const actual = addImageMargin(text, config)
-    const expected = `${createSpanWithMargin("テスト", config)}${createImg("m1", config)}${createImgWithMargin("m2", config)}${createSpan("テスト")}`
+    const actual = addImageMargin(text)
+    const expected = `${createSpanWithMargin("テスト")}${createImg("m1")}${createImgWithMargin("m2")}${createSpan("テスト")}`
 
     expect(actual).toBe(expected)
   })
 })
 
 describe("applyMahjongPretty/replaceMpszSuitedPattern", () => {
-  const config = deepCopy(consts.DEFAULT_CONFIG)
-
   test.each([
-    [
-      "テスト12mテスト",
-      `テスト${createImg("m1", config)}${createImg("m2", config)}テスト`,
-    ],
-    [
-      "テスト1２mテスト",
-      `テスト${createImg("m1", config)}${createImg("m2", config)}テスト`,
-    ],
-    [
-      "テスト12ｍテスト",
-      `テスト${createImg("m1", config)}${createImg("m2", config)}テスト`,
-    ],
-    [
-      "テスト1m2pテスト",
-      `テスト${createImg("m1", config)}${createImg("p2", config)}テスト`,
-    ],
-    [
-      "テスト1赤5mテスト",
-      `テスト${createImg("m1", config)}${createImg("m0", config)}テスト`,
-    ],
-    [
-      "テスト1mr5pテスト",
-      `テスト${createImg("m1", config)}${createImg("p0", config)}テスト`,
-    ],
+    ["テスト12mテスト", `テスト${createImg("m1")}${createImg("m2")}テスト`],
+    ["テスト1２mテスト", `テスト${createImg("m1")}${createImg("m2")}テスト`],
+    ["テスト12ｍテスト", `テスト${createImg("m1")}${createImg("m2")}テスト`],
+    ["テスト1m2pテスト", `テスト${createImg("m1")}${createImg("p2")}テスト`],
+    ["テスト1赤5mテスト", `テスト${createImg("m1")}${createImg("m0")}テスト`],
+    ["テスト1mr5pテスト", `テスト${createImg("m1")}${createImg("p0")}テスト`],
     [
       "テスト1ー２ｍテスト",
-      `テスト${createImg("m1", config)}-${createImg("m2", config)}テスト`,
+      `テスト${createImg("m1")}-${createImg("m2")}テスト`,
     ],
   ])("MPSZ形式数牌が変換されること", (text, expected) => {
-    const actual = replaceMpszSuitedPattern(text, config)
+    const actual = replaceMpszSuitedPattern(text)
 
     expect(actual).toBe(expected)
   })
@@ -132,7 +106,7 @@ describe("applyMahjongPretty/replaceMpszSuitedPattern", () => {
   test("r以外の文字が続くときは変換されないこと", () => {
     const text = "テスト12mpテスト"
 
-    const actual = replaceMpszSuitedPattern(text, config)
+    const actual = replaceMpszSuitedPattern(text)
     const expected = "テスト12mpテスト"
 
     expect(actual).toBe(expected)
@@ -140,27 +114,16 @@ describe("applyMahjongPretty/replaceMpszSuitedPattern", () => {
 })
 
 describe("applyMahjongPretty/replaceMpszHonorPattern", () => {
-  const config = deepCopy(consts.DEFAULT_CONFIG)
-
   test.each([
-    [
-      "テスト12zテスト",
-      `テスト${createImg("z1", config)}${createImg("z2", config)}テスト`,
-    ],
-    [
-      "テスト1２zテスト",
-      `テスト${createImg("z1", config)}${createImg("z2", config)}テスト`,
-    ],
-    [
-      "テスト12ｚテスト",
-      `テスト${createImg("z1", config)}${createImg("z2", config)}テスト`,
-    ],
+    ["テスト12zテスト", `テスト${createImg("z1")}${createImg("z2")}テスト`],
+    ["テスト1２zテスト", `テスト${createImg("z1")}${createImg("z2")}テスト`],
+    ["テスト12ｚテスト", `テスト${createImg("z1")}${createImg("z2")}テスト`],
     [
       "テスト1ー２ｚテスト",
-      `テスト${createImg("z1", config)}-${createImg("z2", config)}テスト`,
+      `テスト${createImg("z1")}-${createImg("z2")}テスト`,
     ],
   ])("MPSZ形式字牌が変換されること", (text, expected) => {
-    const actual = replaceMpszHonorPattern(text, config)
+    const actual = replaceMpszHonorPattern(text)
 
     expect(actual).toBe(expected)
   })
@@ -168,7 +131,7 @@ describe("applyMahjongPretty/replaceMpszHonorPattern", () => {
   test("r以外の文字が続くときは変換されないこと", () => {
     const text = "テスト12zpテスト"
 
-    const actual = replaceMpszHonorPattern(text, config)
+    const actual = replaceMpszHonorPattern(text)
     const expected = "テスト12zpテスト"
 
     expect(actual).toBe(expected)
@@ -177,7 +140,7 @@ describe("applyMahjongPretty/replaceMpszHonorPattern", () => {
   test("8以上の数字は変換されないこと", () => {
     const text = "テスト08zテスト"
 
-    const actual = replaceMpszHonorPattern(text, config)
+    const actual = replaceMpszHonorPattern(text)
     const expected = "テスト08zテスト"
 
     expect(actual).toBe(expected)
@@ -185,62 +148,34 @@ describe("applyMahjongPretty/replaceMpszHonorPattern", () => {
 })
 
 describe("applyMahjongPretty/replaceHanSuitedPattern", () => {
-  const config = deepCopy(consts.DEFAULT_CONFIG)
-
   test.each([
-    [
-      "テスト12萬テスト",
-      `テスト${createImg("m1", config)}${createImg("m2", config)}テスト`,
-    ],
-    [
-      "テスト1２萬テスト",
-      `テスト${createImg("m1", config)}${createImg("m2", config)}テスト`,
-    ],
-    [
-      "テスト1二萬テスト",
-      `テスト${createImg("m1", config)}${createImg("m2", config)}テスト`,
-    ],
-    [
-      "テスト1萬2筒テスト",
-      `テスト${createImg("m1", config)}${createImg("p2", config)}テスト`,
-    ],
-    [
-      "テスト1赤5萬テスト",
-      `テスト${createImg("m1", config)}${createImg("m0", config)}テスト`,
-    ],
+    ["テスト12萬テスト", `テスト${createImg("m1")}${createImg("m2")}テスト`],
+    ["テスト1２萬テスト", `テスト${createImg("m1")}${createImg("m2")}テスト`],
+    ["テスト1二萬テスト", `テスト${createImg("m1")}${createImg("m2")}テスト`],
+    ["テスト1萬2筒テスト", `テスト${createImg("m1")}${createImg("p2")}テスト`],
+    ["テスト1赤5萬テスト", `テスト${createImg("m1")}${createImg("m0")}テスト`],
     [
       "テスト1萬ｒ五筒テスト",
-      `テスト${createImg("m1", config)}${createImg("p0", config)}テスト`,
+      `テスト${createImg("m1")}${createImg("p0")}テスト`,
     ],
     [
       "テスト1ー二萬テスト",
-      `テスト${createImg("m1", config)}-${createImg("m2", config)}テスト`,
+      `テスト${createImg("m1")}-${createImg("m2")}テスト`,
     ],
   ])("漢字形式数牌が変換されること", (text, expected) => {
-    const actual = replaceHanSuitedPattern(text, config)
+    const actual = replaceHanSuitedPattern(text)
 
     expect(actual).toBe(expected)
   })
 })
 
 describe("applyMahjongPretty/replaceHanHonorPattern", () => {
-  const config = deepCopy(consts.DEFAULT_CONFIG)
-
   test.each([
-    [
-      "テスト東南テスト",
-      `テスト${createImg("z1", config)}${createImg("z2", config)}テスト`,
-    ],
-    [
-      "テスト東ー南テスト",
-      `テスト${createImg("z1", config)}-${createImg("z2", config)}テスト`,
-    ],
-    [
-      "テスト發-発テスト",
-      `テスト${createImg("z6", config)}-${createImg("z6", config)}テスト`,
-    ],
+    ["テスト東南テスト", `テスト${createImg("z1")}${createImg("z2")}テスト`],
+    ["テスト東ー南テスト", `テスト${createImg("z1")}-${createImg("z2")}テスト`],
+    ["テスト發-発テスト", `テスト${createImg("z6")}-${createImg("z6")}テスト`],
   ])("漢字形式数牌が変換されること", (text, expected) => {
-    const actual = replaceHanHonorPattern(text, config)
+    const actual = replaceHanHonorPattern(text)
 
     expect(actual).toBe(expected)
   })

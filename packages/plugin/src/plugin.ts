@@ -13,14 +13,10 @@ const plugin: OnePlugin = {
   author: consts.PLUGIN_AUTHOR_JA,
   url: consts.BOOTH_URL,
   permissions: ["filter.comment"],
-  defaultState: deepCopy(consts.DEFAULT_CONFIG),
-
-  init(api) {
-    m_api = api
-  },
+  defaultState: {},
 
   async filterComment(comment) {
-    return await filter(comment, m_api)
+    return await filter(comment)
   },
 }
 

@@ -1,0 +1,14 @@
+.margin {
+  margin-right: 4px;
+}
+
+.pai {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+/* サイズ調整はここの数値を書き換えてください。 */
+.pai {
+  width: auto !important;
+  height: 36px !important;
+}
